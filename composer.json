@@ -1,0 +1,24 @@
+{
+  "name": "ccheng/yii2-category-config",
+  "description": "Category Config Manager",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "extension"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ccheng",
+      "email": "fishes207569@126.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "ccheng\\config\\": "src"
+    }
+  }
+}
