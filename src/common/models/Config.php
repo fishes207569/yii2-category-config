@@ -6,6 +6,7 @@ use ccheng\config\common\enums\ConfigTypeEnum;
 use ccheng\config\common\helpers\ArrayHelper;
 
 use common\helpers\StringHelper;
+use yii\base\Model;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -20,13 +21,13 @@ use yii\db\ActiveRecord;
  * @property int $cc_config_app_id 应用
  * @property string $cc_config_extra 配置值
  * @property string $cc_config_remark 配置说明
- * @property string $cc_config_default_value 配置默认值
- * @property int $cc_config_status 状态[-1:删除;0:禁用;1启用]
+ * @property string $cc_config_status 状态[-1:删除;0:禁用;1启用]
  * @property int $cc_config_created_at 创建时间
  * @property int $cc_config_updated_at 修改时间
  * @property int $cc_config_sort 排序
  * @property Category $category
  * @property ConfigValue $configValue
+ * @property array $configValues
  */
 class Config extends ActiveRecord
 {
@@ -49,14 +50,13 @@ class Config extends ActiveRecord
                 'cc_config_category_id',
                 'cc_config_created_at',
                 'cc_config_updated_at',
-                'cc_config_sort',
-                'cc_config_status',
+                'cc_config_sort'
             ], 'integer'],
-            [['cc_config_app_id'],'safe'],
-            [['cc_config_name','cc_config_title'], 'string', 'max' => 50],
+            [['cc_config_app_id'], 'safe'],
+            [['cc_config_name', 'cc_config_title', 'cc_config_status'], 'string', 'max' => 50],
             ['cc_config_type', 'in', 'range' => ConfigTypeEnum::getKeys()],
-            [['cc_config_type', 'cc_config_default_value'], 'string', 'max' => 30],
-            [['cc_config_extra'], 'safe'],
+            [['cc_config_type'], 'string', 'max' => 30],
+            ['cc_config_extra','checkJson'],
             [['cc_config_name', 'cc_config_remark'], 'string', 'max' => 255],
             ['cc_config_category_id', 'exist', 'targetClass' => Category::class, 'targetAttribute' => 'cc_category_id'],
 
@@ -76,7 +76,6 @@ class Config extends ActiveRecord
             'cc_config_name' => '配置名称',
             'cc_config_category_id' => '父级ID',
             'cc_config_app_id' => '应用ID',
-            'cc_config_default_value' => '默认值',
             'cc_config_extra' => '配置值',
             'cc_config_remark' => '配置说明',
             'cc_config_status' => '状态',
@@ -96,23 +95,48 @@ class Config extends ActiveRecord
         return $this->hasOne(Category::class, ['cc_category_id' => 'cc_config_category_id']);
     }
 
+    public function checkJson($attribute, $params)
+    {
+        $this->$attribute = json_decode($this->$attribute, true);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            $this->addError($attribute, '数据不合法');
+        } else {
+            return true;
+        }
+    }
+
     /**
      * @param null $app_id
      * @param null $user_id
      * @return \yii\db\ActiveQuery
      */
-    public function getConfigValue($app_id = null, $user_id = null)
+    public function getConfigValue($user_id = null)
     {
         $query = $this->hasOne(ConfigValue::class, ['cc_config_value_config_id' => 'cc_config_id']);
-        if ($app_id) {
-            $query->andOnCondition(['cc_config_value_app_id' => $app_id]);
-        }
         if ($user_id) {
             $query->andOnCondition(['cc_config_value_user_id' => $user_id]);
         }
         return $query;
     }
 
+    public function getConfigValues()
+    {
+        return $this->hasMany(ConfigValue::class, ['cc_config_value_config_id' => 'cc_config_id']);
+    }
+
+    public function transactions()
+    {
+        return [Model::SCENARIO_DEFAULT => self::OP_ALL];
+    }
+
+    public function beforeDelete()
+    {
+        if (ConfigValue::deleteAll(['cc_config_value_config_id' => $this->cc_config_id])) {
+            return parent::beforeDelete();
+        } else {
+            return false;
+        }
+    }
 
     public function behaviors()
     {

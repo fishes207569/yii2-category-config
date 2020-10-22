@@ -15,6 +15,7 @@ class CategoryController extends BaseController
 
     public function actionIndex()
     {
+
         $form = new CategorySearch();
         $form->load($this->params, '');
         $list = ['list' => []];

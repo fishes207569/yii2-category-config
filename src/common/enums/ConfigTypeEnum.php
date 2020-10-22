@@ -24,6 +24,7 @@ class ConfigTypeEnum extends Enum
     const CONFIG_TYPE_EDITOR = 'editor';
     const CONFIG_TYPE_IMAGE = 'image';
     const CONFIG_TYPE_FILE = 'file';
+    const CONFIG_TYPE_JSON = 'json';
 
     public static function getMap(): array
     {
@@ -41,7 +42,8 @@ class ConfigTypeEnum extends Enum
             static::CONFIG_TYPE_CHECKBOX => '复选框',
             static::CONFIG_TYPE_EDITOR => '编辑器',
             static::CONFIG_TYPE_IMAGE => '图片上传',
-            static::CONFIG_TYPE_FILE => '文件上传'
+            static::CONFIG_TYPE_FILE => '文件上传',
+            static::CONFIG_TYPE_JSON => 'JSON'
         ];
     }
 }

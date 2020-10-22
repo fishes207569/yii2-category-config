@@ -66,7 +66,7 @@ class BaseListSearch extends Model
             $result['list'] = $this->search();
             $result['page_size'] = $this->size;
             $result['page'] = $this->page;
-            $result['total'] = $this->count;
+            $result['total'] = intval($this->count);
             $result['page_count'] = $this->pageCount;
             return $result;
         } else {

@@ -29,14 +29,13 @@ class m201009134709_cc_task extends Migration
         ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
         CREATE TABLE `cc_config_value` (
           `cc_config_value_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-          `cc_config_value_app_id` varchar(20) NOT NULL DEFAULT '' COMMENT '应用',
           `cc_config_value_config_id` int(10) NOT NULL DEFAULT '0' COMMENT '配置id',
           `cc_config_value_user_id` int(10) unsigned DEFAULT '0' COMMENT '商户id',
           `cc_config_value_data` text COMMENT '配置值',
           `cc_config_value_created_at` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
           `cc_config_value_updated_at` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
           PRIMARY KEY (`cc_config_value_id`) USING BTREE,
-          UNIQUE KEY `idx_config` (`cc_config_value_app_id`,`cc_config_value_user_id`,`cc_config_value_config_id`) USING BTREE
+          UNIQUE KEY `idx_config` (`cc_config_value_user_id`,`cc_config_value_config_id`) USING BTREE
         ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='公用_配置值表';
         CREATE TABLE `cc_config` (
           `cc_config_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -47,7 +46,6 @@ class m201009134709_cc_task extends Migration
           `cc_config_category_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '配置分类',
           `cc_config_extra` json NOT NULL COMMENT '配置值',
           `cc_config_remark` varchar(1000) NOT NULL DEFAULT '' COMMENT '配置说明',
-          `cc_config_default_value` varchar(500) DEFAULT '' COMMENT '默认配置',
           `cc_config_sort` int(10) unsigned DEFAULT '0' COMMENT '排序',
           `cc_config_status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态[-1:删除;0:禁用;1启用]',
           `cc_config_created_at` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',

@@ -10,8 +10,8 @@ use ccheng\config\common\abstracts\Enum;
  */
 class StatusEnum extends Enum
 {
-    const STATUS_DISABLED = 0;
-    const STATUS_ENABLE = 1;
+    const STATUS_DISABLED = 'disabled';
+    const STATUS_ENABLE = 'enabled';
 
     public static function getMap(): array
     {

@@ -43,7 +43,7 @@ class ConfigItemController extends BaseController
 
     public function actionUpdate()
     {
-        /** @var Category $model */
+        /** @var Config $model */
         $model = $this->getModel();
         $model->load($this->params, '');
         if (!empty($model->dirtyAttributes)) {
@@ -60,7 +60,7 @@ class ConfigItemController extends BaseController
 
     public function actionDelete()
     {
-        /** @var Category $model */
+        /** @var Config $model */
         $model = $this->getModel();
         if (!$model->delete()) {
             throw new UnprocessableEntityHttpException(ModelHelpers::getModelError($model));

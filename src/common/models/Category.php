@@ -16,7 +16,7 @@ use yii\db\ActiveRecord;
  * @property string $cc_category_name 分类名称
  * @property int $cc_category_p_id 父级ID
  * @property int $cc_category_level 级别
- * @property int $cc_category_status 状态[-1:删除;0:禁用;1启用]
+ * @property status $cc_category_status 状态
  * @property int $cc_category_created_at 创建时间
  * @property int $cc_category_updated_at 修改时间
  * @property int $cc_category_sort 排序

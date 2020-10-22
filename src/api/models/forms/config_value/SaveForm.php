@@ -31,7 +31,6 @@ class SaveForm extends Model
         $config_ids = array_keys($this->config_data);
         $config_value_models = ConfigValue::find()
             ->where([
-                'cc_config_value_app_id' => $this->app_id,
                 'cc_config_value_user_id' => $this->user_id,
                 'cc_config_value_config_id' => $config_ids
             ])->all();
@@ -51,10 +50,9 @@ class SaveForm extends Model
             $time = time();
             foreach ($this->config_data as $config_id => $config_value) {
                 $data = [];
-                $data['cc_config_value_app_id'] = $this->app_id;
                 $data['cc_config_value_user_id'] = $this->user_id;
                 $data['cc_config_value_config_id'] = $config_id;
-                $data['cc_config_value_data'] = $config_value;
+                $data['cc_config_value_data'] = is_array($config_value)?json_encode($config_value):$config_value;
                 $data['cc_config_value_created_at'] = $time;
                 $data['cc_config_value_updated_at'] = $time;
                 $new_config_value_data[] = $data;

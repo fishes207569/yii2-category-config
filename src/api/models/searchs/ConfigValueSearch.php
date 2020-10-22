@@ -12,14 +12,12 @@ use yii\db\ActiveRecord;
 
 class ConfigValueSearch extends Model
 {
-    public $cc_config_value_app_id;
     public $cc_config_value_user_id;
     public $cc_config_category_id;
 
     public function rules()
     {
         return [
-            ['cc_config_value_app_id', 'string'],
             ['cc_config_category_id', 'exist', 'targetClass' => Category::class, 'targetAttribute' => 'cc_category_id'],
             ['cc_config_name', 'exist', 'targetClass' => Config::class, 'targetAttribute' => 'cc_config_name'],
         ];
@@ -31,11 +29,9 @@ class ConfigValueSearch extends Model
         $query->where([
             'cc_config_category_id' => $this->cc_config_category_id,
         ]);
-        $app_id = $this->cc_config_value_app_id;
         $user_id = $this->cc_config_value_user_id;
-        $query->with(['configValue' => function (ActiveQuery $q) use ($app_id, $user_id) {
+        $query->with(['configValue' => function (ActiveQuery $q) use ($user_id) {
             $condition = [];
-            $app_id && $condition['cc_config_value_app_id'] = $app_id;
             $user_id && $condition['cc_config_value_user_id'] = $user_id;
             !empty($condition) && $q->andOnCondition($condition);
             return $q;
@@ -45,7 +41,7 @@ class ConfigValueSearch extends Model
         foreach ($list as $config) {
             /** @var $config Config */
             $item=$config->toArray();
-            $item['cc_config_value'] = $config->configValue ? $config->configValue->cc_config_value_data : $config->cc_config_default_value;
+            $item['cc_config_value'] = $config->configValue ? $config->configValue->cc_config_value_data : '';
 
             $config_data[] = $item;
         }
