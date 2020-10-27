@@ -192,8 +192,8 @@ class Category extends ActiveRecord
                 list($level, $tree) = $this->getParentData();
                 // 查找所有子级
                 $list = self::find()
-                    ->where(['like', $this->cc_category_tree, $this->cc_category_tree . $this->cc_category_id . '%', false])
-                    ->select(['id', 'cc_category_level', 'cc_category_tree', 'cc_category_p_id'])
+                    ->where(['like', 'cc_category_tree', $this->cc_category_tree . $this->cc_category_id . '%', false])
+                    ->select(['cc_category_id', 'cc_category_level', 'cc_category_tree', 'cc_category_p_id'])
                     ->asArray()
                     ->all();
 
