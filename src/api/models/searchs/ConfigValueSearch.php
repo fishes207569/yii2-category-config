@@ -29,6 +29,7 @@ class ConfigValueSearch extends Model
         $query->where([
             'cc_config_category_id' => $this->cc_config_category_id,
         ]);
+        $query->orderBy('cc_config_sort');
         $user_id = $this->cc_config_value_user_id;
         $query->with(['configValue' => function (ActiveQuery $q) use ($user_id) {
             $condition = [];
