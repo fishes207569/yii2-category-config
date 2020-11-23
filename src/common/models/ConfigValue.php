@@ -2,6 +2,7 @@
 
 namespace ccheng\config\common\models;
 
+use ccheng\config\common\behaviors\ConfigValueBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -14,6 +15,7 @@ use yii\db\ActiveRecord;
  * @property string $cc_config_value_data 配置分类
  * @property int $cc_config_value_created_at 创建时间
  * @property int $cc_config_value_updated_at 更新时间
+ * @property Config $config 更新时间
  */
 class ConfigValue extends ActiveRecord
 {
@@ -84,7 +86,8 @@ class ConfigValue extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['cc_config_value_created_at', 'cc_config_value_updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['cc_config_value_updated_at']
                 ]
-            ]
+            ],
+            ['class' => ConfigValueBehavior::class]
         ];
     }
 

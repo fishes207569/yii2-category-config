@@ -27,6 +27,26 @@ use yii\web\UnprocessableEntityHttpException;
  * @property string $cc_category_code 分类编码
  * @property int $cc_category_subset_count 子分类计数
  * @property Category $parent
+ * @property array $configs
+ *
+ * @SWG\Definition(
+ *      definition="category",
+ *      type="object",
+ *      @SWG\Property(property="cc_category_id", type="integer", description="分类ID",example=1),
+ *      @SWG\Property(property="cc_category_type", ref="#/definitions/category_type")),
+ * @SWG\Property(property="cc_category_name", type="string", description="分类名称",example="系统配置"),
+ * @SWG\Property(property="cc_category_p_id", type="integer", description="父级ID",example="0"),
+ * @SWG\Property(property="cc_category_level", type="integer", description="级别",example=1),
+ * @SWG\Property(property="cc_category_status", ref="#/definitions/model_status"),
+ * @SWG\Property(property="cc_category_created_at", type="integer", description="创建时间", example="1604039236"),
+ * @SWG\Property(property="cc_category_updated_at", type="integer", description="修改时间", example="1604039236"),
+ * @SWG\Property(property="cc_category_sort", type="integer", description="排序", example="1"),
+ * @SWG\Property(property="cc_category_icon", type="string", description="分类图标", example="https://bkimg.cdn.bcebos.com/pic/c8ea15ce36d3d539ea45c4bd3a87e950352ab050?x-bce-process=image/resize,m_lfit,w_174,limit_1"),
+ * @SWG\Property(property="cc_category_tree", type="string", description="分类树", example="0 1"),
+ * @SWG\Property(property="cc_category_code", type="string", description="分类编码", example="dsfsdgdfsg"),
+ * @SWG\Property(property="cc_category_subset_count", type="integer", description="子分类计数", example="2"),
+ * @SWG\Property(property="Category",type="object",description="分类 Model"),
+ * )
  */
 class Category extends ActiveRecord
 {
@@ -63,7 +83,7 @@ class Category extends ActiveRecord
             }],
             ['cc_category_type', function ($attribute, $params) {
                 if (!$this->isNewRecord && $this->cc_category_level == 1) {
-                    $exists = self::find()->where(['and', ['!=', 'cc_category_id', $this->cc_category_id], ['cc_category_level' => 1,'cc_category_type'=>$this->cc_category_type]])->exists();
+                    $exists = self::find()->where(['and', ['!=', 'cc_category_id', $this->cc_category_id], ['cc_category_level' => 1, 'cc_category_type' => $this->cc_category_type]])->exists();
                     if ($exists) {
                         $this->addError($attribute, '同一类型的顶级分类已存在！');
                     }
@@ -147,10 +167,11 @@ class Category extends ActiveRecord
 
         return parent::beforeSave($insert);
     }
+
     public function afterSave($insert, $changedAttributes)
     {
-        if($this->cc_category_level==1){
-            $exists=self::find()->where(['and', ['!=', 'cc_category_id', $this->cc_category_id], ['cc_category_level' => 1,'cc_category_type'=>$this->cc_category_type]])->exists();
+        if ($this->cc_category_level == 1) {
+            $exists = self::find()->where(['and', ['!=', 'cc_category_id', $this->cc_category_id], ['cc_category_level' => 1, 'cc_category_type' => $this->cc_category_type]])->exists();
             if ($exists) {
                 throw new UnprocessableEntityHttpException('同一类型的顶级分类已存在！');
             }
@@ -212,7 +233,7 @@ class Category extends ActiveRecord
 
                 $distanceLevel = $level - $this->cc_category_level;
                 // 递归修改
-                $data = ArrayHelper::itemsMerge($list, $this->cc_category_id);
+                $data = ArrayHelper::itemsMerge($list, $this->cc_category_id, 'cc_category_id', 'cc_category_p_id');
                 $this->recursionUpdate($data, $distanceLevel, $tree);
 
                 $this->cc_category_level = $level;
@@ -239,7 +260,7 @@ class Category extends ActiveRecord
         $itemLevel = '';
         $itemTree = '';
         foreach ($data as $item) {
-            $updateIds[] = $item['id'];
+            $updateIds[] = $item['cc_category_id'];
             empty($itemLevel) && $itemLevel = $item['cc_category_level'] + $distanceLevel;
             empty($itemTree) && $itemTree = str_replace($this->cc_category_tree, $tree, $item[$this->cc_category_tree]);
             !empty($item['-']) && $this->recursionUpdate($item['-'], $distanceLevel, $tree);
@@ -247,7 +268,7 @@ class Category extends ActiveRecord
             unset($item);
         }
 
-        !empty($updateIds) && self::updateAll(['level' => $itemLevel, $this->cc_category_tree => $itemTree], ['in', 'id', $updateIds]);
+        !empty($updateIds) && self::updateAll(['cc_category_level' => $itemLevel, $this->cc_category_tree => $itemTree], ['in', 'cc_category_id', $updateIds]);
     }
 
     /**
@@ -263,5 +284,10 @@ class Category extends ActiveRecord
         $tree = $parent->cc_category_tree . ' ' . ($parent->cc_category_id ?? 0);
 
         return [$level, $tree];
+    }
+
+    public function getConfigs()
+    {
+        return $this->hasMany(Config::class, ['cc_config_category_id' => 'cc_category_id']);
     }
 }
