@@ -5,8 +5,7 @@ namespace ccheng\config\common\services;
 use ccheng\config\common\enums\StatusEnum;
 use ccheng\config\common\models\Category;
 use ccheng\config\common\models\Config;
-use common\constants\CacheConstant;
-use common\enums\AppIdEnum;
+use ccheng\config\common\constants\CacheConstant;
 use yii\db\ActiveQuery;
 
 class ConfigService
@@ -25,7 +24,7 @@ class ConfigService
      * @param int $user_id
      * @return array
      */
-    public static function getConfigValueByCategoryCodeToDb($code, $app_id = AppIdEnum::BACKEND, $user_id = 1)
+    public static function getConfigValueByCategoryCodeToDb($code, $app_id, $user_id)
     {
         $query = Category::find()->where(['cc_category_code' => $code])->innerJoinWith([
             'configs' => function (ActiveQuery $q1) use ($app_id, $user_id) {
@@ -48,7 +47,7 @@ class ConfigService
      * @param bool $use_cache
      * @return array|mixed
      */
-    public static function getConfigValueByCategoryCode($code, $app_id = AppIdEnum::BACKEND, $user_id = 1, $use_cache = true)
+    public static function getConfigValueByCategoryCode($code, $app_id, $user_id, $use_cache = true)
     {
         if ($use_cache) {
             $cache_key = self::getConfigCacheKey($app_id, $user_id);
