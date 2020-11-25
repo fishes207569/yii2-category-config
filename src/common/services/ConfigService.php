@@ -65,7 +65,7 @@ class ConfigService
 
     public static function getConfigCacheKey($app_id, $user_id)
     {
-        return CacheConstant::CACHE_CONFIG_PREFIX . $app_id . '.' . $user_id;
+        return CacheConstant::CACHE_CONFIG_PREFIX . $app_id . ':' . $user_id;
     }
 
 

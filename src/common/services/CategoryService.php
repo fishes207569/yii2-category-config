@@ -74,7 +74,26 @@ class CategoryService
     }
 
     /**
-     * 获取 map
+     * 根据父级 CODE 获取分类数据
+     * @param string $parent_code
+     * @param array $fields
+     * @param string $orderBy 升序还是降序
+     * @param int $limit 查询量
+     * @return array
+     */
+    public static function getSubCategoryByCode(string $parent_code, array $fields = [], $orderMode = SORT_DESC, $limit = 99)
+    {
+        $parent = self::getCategoryByCode($parent_code);
+        $query = self::getQuery(StatusEnum::STATUS_ENABLE);
+        $query->where(['cc_category_p_id' => $parent->cc_category_id]);
+        !empty($fields) && $query->select($fields);
+        $query->orderBy(['cc_category_sort' => $orderMode]);
+        $query->limit($limit);
+        return $query->asArray()->all();
+    }
+
+    /**
+     * 根据父级 CODE 获取分类 map
      * @param string $parent_code
      * @param string $index_field 具备唯一性的字段，处于 $fields 数组最后一个
      * @param array $fields
@@ -82,7 +101,7 @@ class CategoryService
      * @param int $limit 查询量
      * @return array [1=>'xxxx',2=>'xxxx']
      */
-    public static function getSubCategoryByCode(string $parent_code, string $index_field = 'id', array $fields = ['name' => 'cc_category_name', 'id' => 'cc_category_id'], $orderMode = SORT_DESC, $limit = 99)
+    public static function getSubCategoryMapByCode(string $parent_code, string $index_field = 'id', array $fields = ['name' => 'cc_category_name', 'id' => 'cc_category_id'], $orderMode = SORT_DESC, $limit = 99)
     {
         $parent = self::getCategoryByCode($parent_code);
         $query = self::getQuery(StatusEnum::STATUS_ENABLE);
@@ -93,6 +112,45 @@ class CategoryService
         $query->limit($limit);
         return $query->column();
     }
+
+    /**
+     * 根据父级 ID 获取分类数据
+     * @param int $parent_id
+     * @param array $fields
+     * @param string $orderBy 升序还是降序
+     * @param int $limit 查询量
+     * @return array
+     */
+    public static function getSubCategoryByParentId(int $parent_id, array $fields = [], $orderMode = SORT_DESC, $limit = 99)
+    {
+        $query = self::getQuery(StatusEnum::STATUS_ENABLE);
+        $query->where(['cc_category_p_id' => $parent_id]);
+        !empty($fields) && $query->select($fields);
+        $query->orderBy(['cc_category_sort' => $orderMode]);
+        $query->limit($limit);
+        return $query->asArray()->all();
+    }
+
+    /**
+     * 根据父级 ID 获取分类 map
+     * @param int $parent_id
+     * @param string $index_field 具备唯一性的字段，处于 $fields 数组最后一个
+     * @param array $fields
+     * @param string $orderBy 升序还是降序
+     * @param int $limit 查询量
+     * @return array [1=>'xxxx',2=>'xxxx']
+     */
+    public static function getSubCategoryMapByParentId(int $parent_id, string $index_field = 'id', array $fields = ['name' => 'cc_category_name', 'id' => 'cc_category_id'], $orderMode = SORT_DESC, $limit = 99)
+    {
+        $query = self::getQuery(StatusEnum::STATUS_ENABLE);
+        $query->where(['cc_category_p_id' => $parent_id]);
+        $query->select($fields);
+        $query->indexBy($index_field);
+        $query->orderBy(['cc_category_sort' => $orderMode]);
+        $query->limit($limit);
+        return $query->column();
+    }
+
 
     /**
      * 根据父级 CODE 创建分类
