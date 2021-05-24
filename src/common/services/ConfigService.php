@@ -34,9 +34,8 @@ class ConfigService
                 return $q2->andOnCondition(['cc_config_value_user_id' => $user_id]);
             }
         ]);
-        $query->select(['cc_config_value_data', 'cc_config_name']);
-        $query->indexBy('cc_config_name');
-        return $query->column();
+        $query->select('cc_config_value_data');
+        return $query->scalar();
     }
 
     /**
