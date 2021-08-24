@@ -204,4 +204,16 @@ class CategoryService
         return Category::updateAllCounters(['cc_category_sort' => $num], ['cc_category_id' => $id]);
 
     }
+    /**
+     * @param $filed
+     * @param $code
+     * @return mixed
+     */
+    public static function getFieldByCode($filed, $code)
+    {
+        return self::getQuery(StatusEnum::STATUS_ENABLE)
+            ->select($filed)
+            ->andWhere(['cc_category_code' => $code])
+            ->scalar();
+    }
 }
