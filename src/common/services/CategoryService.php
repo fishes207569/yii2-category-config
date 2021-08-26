@@ -79,9 +79,10 @@ class CategoryService
      * @param array $fields
      * @param string $orderBy 升序还是降序
      * @param int $limit 查询量
+     * @param bool $to_array 转数组
      * @return array
      */
-    public static function getSubCategoryByCode(string $parent_code, array $fields = [], $orderMode = SORT_DESC, $limit = 99)
+    public static function getSubCategoryByCode(string $parent_code, array $fields = [], $orderMode = SORT_DESC, $limit = 99,$to_array = true)
     {
         $parent = self::getCategoryByCode($parent_code);
         $query = self::getQuery(StatusEnum::STATUS_ENABLE);
@@ -89,9 +90,8 @@ class CategoryService
         !empty($fields) && $query->select($fields);
         $query->orderBy(['cc_category_sort' => $orderMode]);
         $query->limit($limit);
-        return $query->asArray()->all();
+        return $query->asArray($to_array)->all();
     }
-
     /**
      * 根据父级 CODE 获取分类 map
      * @param string $parent_code
