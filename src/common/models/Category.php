@@ -25,6 +25,7 @@ use yii\web\UnprocessableEntityHttpException;
  * @property int $cc_category_icon 分类图标
  * @property string $cc_category_tree 分类树
  * @property string $cc_category_code 分类编码
+ * @property string $cc_category_config 分类配置
  * @property int $cc_category_subset_count 子分类计数
  * @property Category $parent
  * @property array $configs
@@ -44,6 +45,7 @@ use yii\web\UnprocessableEntityHttpException;
  * @SWG\Property(property="cc_category_icon", type="string", description="分类图标", example="https://bkimg.cdn.bcebos.com/pic/c8ea15ce36d3d539ea45c4bd3a87e950352ab050?x-bce-process=image/resize,m_lfit,w_174,limit_1"),
  * @SWG\Property(property="cc_category_tree", type="string", description="分类树", example="0 1"),
  * @SWG\Property(property="cc_category_code", type="string", description="分类编码", example="dsfsdgdfsg"),
+ * @SWG\Property(property="cc_category_config", type="string", description="分类配置", example="{}"),
  * @SWG\Property(property="cc_category_subset_count", type="integer", description="子分类计数", example="2"),
  * @SWG\Property(property="Category",type="object",description="分类 Model"),
  * )
@@ -97,7 +99,15 @@ class Category extends ActiveRecord
             }],
             ['cc_category_code', 'unique'],
             ['cc_category_p_id', 'default', 'value' => 0],
-
+            ['cc_category_config', 'default', 'value' => '{}'],
+            ['cc_category_config', 'filter', 'filter' => function ($value) {
+                if (is_array($value)) {
+                    return $value;
+                } else {
+                    return json_decode($value,true);
+                }
+            }],
+            ['cc_category_config', 'validateJson'],
 
         ];
     }
@@ -120,8 +130,20 @@ class Category extends ActiveRecord
             'cc_category_icon' => '分类图标',
             'cc_category_tree' => '树',
             'cc_category_code' => '分类编码',
-            'cc_category_subset_count' => '子类计数'
+            'cc_category_subset_count' => '子类计数',
+            'cc_category_config' => '分类配置'
         ];
+    }
+
+    public function validateJson($attribute, $params)
+    {
+        if (!is_array($this->$attribute)) {
+            json_decode(trim($this->$attribute));
+            if (json_last_error() != JSON_ERROR_NONE) {
+                return $this->addError($attribute, "不是Json格式");
+            }
+        }
+
     }
 
     /**
