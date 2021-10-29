@@ -20,7 +20,8 @@ class ConfigItemController extends BaseController
         return $form->getList();
     }
 
-    public function actionList(){
+    public function actionList()
+    {
         $form = new ConfigItemSearch();
         $form->load($this->params, '');
         $list = ['list' => []];
@@ -62,7 +63,9 @@ class ConfigItemController extends BaseController
     {
         /** @var Config $model */
         $model = $this->getModel();
-        if (!$model->delete()) {
+        if ($model->delete()) {
+            $model->unlinkAll('configValues', true);
+        } else {
             throw new UnprocessableEntityHttpException(ModelHelpers::getModelError($model));
         }
 

@@ -27,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property int $cc_config_sort 排序
  * @property Category $category
  * @property ConfigValue $configValue
- * @property array $configValues
+ * @property ConfigValue[] $configValues
  */
 class Config extends ActiveRecord
 {
@@ -56,7 +56,7 @@ class Config extends ActiveRecord
             [['cc_config_name', 'cc_config_title', 'cc_config_status'], 'string', 'max' => 50],
             ['cc_config_type', 'in', 'range' => ConfigTypeEnum::getKeys()],
             [['cc_config_type'], 'string', 'max' => 30],
-            ['cc_config_extra','checkJson'],
+            ['cc_config_extra', 'checkJson'],
             [['cc_config_name', 'cc_config_remark'], 'string', 'max' => 255],
             ['cc_config_category_id', 'exist', 'targetClass' => Category::class, 'targetAttribute' => 'cc_category_id'],
 
@@ -127,15 +127,6 @@ class Config extends ActiveRecord
     public function transactions()
     {
         return [Model::SCENARIO_DEFAULT => self::OP_ALL];
-    }
-
-    public function beforeDelete()
-    {
-        if (ConfigValue::deleteAll(['cc_config_value_config_id' => $this->cc_config_id])) {
-            return parent::beforeDelete();
-        } else {
-            return false;
-        }
     }
 
     public function behaviors()
