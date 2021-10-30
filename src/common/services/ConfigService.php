@@ -38,18 +38,10 @@ class ConfigService
         return $query->scalar();
     }
 
-    /**
-     * 获取配置值
-     * @param $code
-     * @param string $app_id
-     * @param int $user_id
-     * @param bool $use_cache
-     * @return array|mixed
-     */
     public static function getConfigValueByCategoryCode($code, $app_id, $user_id, $use_cache = true)
     {
         if ($use_cache) {
-            $cache_key = self::getConfigCacheKey($app_id, $user_id);
+            $cache_key = self::getConfigCacheKey($code, $app_id, $user_id);
             if (\Yii::$app->cache->exists($cache_key)) {
                 $result = \Yii::$app->cache->get($cache_key);
             } else {
@@ -62,9 +54,9 @@ class ConfigService
         return $result;
     }
 
-    public static function getConfigCacheKey($app_id, $user_id)
+    public static function getConfigCacheKey($code, $app_id, $user_id)
     {
-        return CacheConstant::CACHE_CONFIG_PREFIX . $app_id . ':' . $user_id;
+        return CacheConstant::CACHE_CONFIG_PREFIX . $code . $app_id . ':' . $user_id;
     }
 
 
