@@ -25,7 +25,7 @@ class ConfigValueBehavior extends Behavior
     {
         $configValue = $event->sender;
         /** @var ConfigValue $configValue */
-        $cache_key = ConfigService::getConfigCacheKey($configValue->config->cc_config_app_id, $configValue->cc_config_value_user_id);
+        $cache_key = ConfigService::getConfigCacheKey($configValue->config->cc_config_name,$configValue->config->cc_config_app_id, $configValue->cc_config_value_user_id);
         \Yii::$app->cache->delete($cache_key);
     }
 
