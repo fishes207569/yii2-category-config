@@ -21,7 +21,7 @@ use yii\db\ActiveRecord;
  * @property int $cc_config_app_id 应用
  * @property string $cc_config_extra 配置值
  * @property string $cc_config_remark 配置说明
- * @property string $cc_config_status 状态[-1:删除;0:禁用;1启用]
+ * @property string $cc_config_status 状态
  * @property int $cc_config_created_at 创建时间
  * @property int $cc_config_updated_at 修改时间
  * @property int $cc_config_sort 排序

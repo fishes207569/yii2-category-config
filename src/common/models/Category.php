@@ -66,6 +66,7 @@ class Category extends ActiveRecord
     public function rules()
     {
         return [
+            [['cc_category_name','cc_category_code','cc_category_type'],'required'],
             [[
                 'cc_category_id',
                 'cc_category_p_id',
