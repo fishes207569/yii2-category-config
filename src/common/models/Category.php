@@ -210,11 +210,8 @@ class Category extends ActiveRecord
     {
         // 自动删除所有下级
         $this->autoDeleteTree();
-        if ($this->cc_category_subset_count) {
-            if ($this->parent) {
-                $this->parent->updateCounters(['cc_category_subset_count' => -1]);
-            }
-
+        if ($this->parent) {
+            $this->parent->updateCounters(['cc_category_subset_count' => -1]);
         }
         return parent::beforeDelete();
     }
@@ -224,7 +221,7 @@ class Category extends ActiveRecord
      */
     protected function autoDeleteTree()
     {
-        self::deleteAll(['like', 'cc_category_tree', $this->cc_category_tree . $this->cc_category_id . '%', false]);
+        self::deleteAll(['like', 'cc_category_tree', $this->cc_category_tree .' '. $this->cc_category_id . '%', false]);
     }
 
     /**
