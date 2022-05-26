@@ -97,11 +97,18 @@ class Config extends ActiveRecord
 
     public function checkJson($attribute, $params)
     {
-        $this->$attribute = json_decode($this->$attribute, true);
-        if (json_last_error() != JSON_ERROR_NONE) {
-            $this->addError($attribute, '数据不合法');
-        } else {
-            return true;
+        if($this->$attribute){
+            if(is_string($this->$attribute)){
+                $this->$attribute = json_decode($this->$attribute, true);
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    $this->addError($attribute, '数据不合法');
+                }
+            }
+            if(in_array($this->cc_config_type,[ConfigTypeEnum::CONFIG_TYPE_RADIO,ConfigTypeEnum::CONFIG_TYPE_CHECKBOX])){
+                if(array_keys($this->$attribute) == range(0,count($this->$attribute)-1)){
+                    $this->addError($attribute, '所选配置类型数据不合法');
+                }
+            }
         }
     }
 
